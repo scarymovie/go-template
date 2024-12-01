@@ -4,7 +4,7 @@ ARG GO_DOCKER_VERSION=1.23
 FROM golang:${GO_DOCKER_VERSION}-alpine AS builder
 
 ENV APP_DIR=/app \
-    APP_ENV=development \
+    APP_ENV=production \
     APP_LISTEN_PORT=8080
 
 WORKDIR $APP_DIR/cmd/app
