@@ -3,11 +3,11 @@ name: template
 
 services:
   go:
-    image: template:production
+    image: template:development
     build:
       context: ../app
-      dockerfile: ../docker/images/alpine/Dockerfile.production
-    container_name: template-go-production
+      dockerfile: ../docker/images/alpine/Dockerfile.development
+    container_name: template-go-development
     restart: always
     depends_on:
       postgres:
@@ -20,7 +20,7 @@ services:
 
   postgres:
     image: postgres:17-alpine
-    container_name: template-postgres-production
+    container_name: template-postgres-development
     restart: always
     environment:
       POSTGRES_USER: db_user
@@ -29,7 +29,7 @@ services:
     networks:
       - internal
     volumes:
-      - ./volumes/production/postgres_data:/var/lib/postgresql/data:cached
+      - ./volumes/development/postgres_data:/var/lib/postgresql/data:cached
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U db_user -d db_database"]
       interval: 10s
