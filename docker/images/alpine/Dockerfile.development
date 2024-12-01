@@ -13,6 +13,8 @@ COPY . $APP_DIR/src
 
 RUN go build -o bin/app $APP_DIR/src/cmd/app/main.go
 
+COPY config.yaml $APP_DIR/bin
+
 EXPOSE 8080
 
 CMD ["./bin/app"]
