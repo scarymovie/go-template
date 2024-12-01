@@ -7,14 +7,13 @@ ENV APP_DIR=/app \
     APP_ENV=development \
     APP_LISTEN_PORT=8080
 
-WORKDIR $APP_DIR/cmd/app
+WORKDIR $APP_DIR
 
-COPY . $APP_DIR
+COPY . $APP_DIR/src
 
-RUN go build -o app main.go
-
-STOPSIGNAL SIGQUIT
+RUN go build -o bin/app $APP_DIR/src/cmd/app/main.go
 
 EXPOSE 8080
 
-CMD ["./app"]
+CMD ["./bin/app"]
+#CMD ["tail", "-f", "/dev/null"]
