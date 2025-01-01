@@ -1,21 +1,24 @@
-
-ARG GO_DOCKER_VERSION=1.23
+ARG GO_DOCKER_VERSION=1.23.4
 
 FROM golang:${GO_DOCKER_VERSION}-alpine AS builder
 
-ENV APP_DIR=/app \
+ENV APP_SRC=/go/src \
+    APP_BIN=/go/bin \
     APP_ENV=development \
     APP_LISTEN_PORT=8080
 
-WORKDIR $APP_DIR
+WORKDIR ${APP_SRC}
 
-COPY . $APP_DIR/src
+COPY go.mod go.sum ./
 
-RUN go build -o bin/app $APP_DIR/src/cmd/app/main.go
+RUN go mod tidy
 
-COPY config.yaml $APP_DIR/bin
+COPY . .
 
-EXPOSE 8080
+RUN go build -o ../bin ${APP_SRC}/cmd/app/main.go
 
-CMD ["./bin/app"]
+EXPOSE ${APP_LISTEN_PORT}
+
+WORKDIR ../
+CMD ["./bin/main"]
 #CMD ["tail", "-f", "/dev/null"]
