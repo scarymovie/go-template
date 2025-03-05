@@ -9,6 +9,10 @@ ENV APP_SRC=/go/src \
 
 WORKDIR ${APP_SRC}
 
+RUN apk add --no-cache git bash curl
+RUN go install github.com/air-verse/air@latest
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
 COPY go.mod go.sum ./
 
 RUN go mod tidy
@@ -20,5 +24,6 @@ RUN go build -o ../bin ${APP_SRC}/cmd/app/main.go
 EXPOSE ${APP_LISTEN_PORT}
 
 WORKDIR ../
-CMD ["./bin/main"]
+#CMD ["./bin/main"]
 #CMD ["tail", "-f", "/dev/null"]
+CMD ["air", "-c", ".air.toml"]
