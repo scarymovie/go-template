@@ -25,5 +25,5 @@ EXPOSE ${APP_LISTEN_PORT}
 
 WORKDIR ../
 #CMD ["./bin/main"]
-#CMD ["tail", "-f", "/dev/null"]
-CMD ["air", "-c", ".air.toml"]
+CMD ["tail", "-f", "/dev/null"]
+#CMD ["air", "-c", ".air.toml"]
