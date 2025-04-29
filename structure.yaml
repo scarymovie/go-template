@@ -1,0 +1,22 @@
+project:
+  app:
+    cmd:
+      - app:
+          main.go
+      - go.mod
+      - go.sum
+    external:
+      - proto/
+    internal:
+      - infrastructure/
+      - services/
+    migrations:
+  docker:
+    - docker-compose.development.yml
+    - docker-compose.production.yml
+    - development/
+    - volumes/
+    - images/
+  deployment:
+    - .github/:
+        workflows/
