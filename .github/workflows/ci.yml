@@ -55,14 +55,16 @@ jobs:
       # Шаг 6: Сборка и запуск сервисов через Docker Compose
       # Это основная проверка, которая имитирует запуск окружения
       - name: Build and run services with Docker Compose
+        env:
+          COMPOSE_BAKE: "true"
         run: |
-          echo "Building Docker images..."
+          echo "Building Docker images using Bake..."
           docker compose -f docker/docker-compose.development.yml build
           
           echo "Starting services in detached mode..."
           docker compose -f docker/docker-compose.development.yml up -d
 
-            # Шаг 7: Проверка работоспособности приложения (УЛУЧШЕННАЯ ВЕРСИЯ)
+      # Шаг 7: Проверка работоспособности приложения (УЛУЧШЕННАЯ ВЕРСИЯ)
       - name: Verify Application is Running
         run: |
           echo "Waiting for application to become healthy..."
@@ -74,7 +76,7 @@ jobs:
               echo "✅ Application is up and running!"
           
               echo "Displaying container logs for confirmation..."
-              docker-compose -f docker/docker-compose.development.yml logs go
+              docker compose -f docker/docker-compose.development.yml logs go
               exit 0
             fi
             echo "Attempt $i/12 failed. Retrying in 5 seconds..."
@@ -83,7 +85,7 @@ jobs:
           
           echo "❌ Application did not start in time."
           echo "Displaying container logs for debugging..."
-          docker-compose -f docker/docker-compose.development.yml logs go
+          docker compose -f docker/docker-compose.development.yml logs go
           exit 1
 
       # Шаг 8: Очистка
