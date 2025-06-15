@@ -29,13 +29,11 @@ jobs:
         with:
           go-version: '1.24'
 
-      # Шаг 3: Кэширование Go-модулей
-      # Ускоряет последующие запуски, т.к. зависимости не будут скачиваться заново
       - name: Cache Go modules
         uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('app/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -59,7 +57,7 @@ jobs:
       - name: Build and run services with Docker Compose
         run: |
           echo "Building Docker images..."
-          docker-compose -f docker/docker-compose.development.yml build
+          docker compose -f docker/docker-compose.development.yml build
           
           echo "Starting services in detached mode..."
           docker compose -f docker/docker-compose.development.yml up -d
@@ -82,4 +80,4 @@ jobs:
       # Останавливаем и удаляем контейнеры в любом случае (даже если предыдущие шаги провалились)
       - name: Stop and remove containers
         if: always()
-        run: docker-compose -f docker/docker-compose.development.yml down
+        run: docker compose -f docker/docker-compose.development.yml down
