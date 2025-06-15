@@ -1,24 +1,37 @@
 ARG GO_DOCKER_VERSION=1.24
-
 FROM golang:${GO_DOCKER_VERSION}-alpine AS builder
 
-ENV APP_SRC=/go/src \
-    APP_BIN=/go/bin \
-    APP_ENV=development \
-    APP_LISTEN_PORT=8080
+ENV CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 \
+    APP_DIR=/go/src/app \
+    APP_BIN=/go/bin/app \
+    APP_LISTEN_PORT=8080 \
+    APP_ENV=development
 
-WORKDIR ${APP_SRC}
+WORKDIR ${APP_DIR}
 
 COPY go.mod go.sum ./
-
 RUN go mod tidy
 
 COPY . .
 
-RUN go build -o ../bin ${APP_SRC}/cmd/app/main.go
+RUN go build -o ${APP_BIN} ./cmd/app
+
+FROM alpine:latest
+
+RUN addgroup -S app && adduser -S app -G app
+
+ENV APP_LISTEN_PORT=8080 \
+    APP_ENV=development
+
+WORKDIR /app
+
+COPY --from=builder --chown=app:app /go/bin/app ./app
+RUN chmod +x ./app
+
+USER app
 
 EXPOSE ${APP_LISTEN_PORT}
 
-WORKDIR ../
-CMD ["./bin/main"]
-#CMD ["tail", "-f", "/dev/null"]
+CMD ["./app"]

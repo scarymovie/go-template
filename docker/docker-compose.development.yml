@@ -3,7 +3,6 @@ name: template
 
 services:
   go:
-    image: template:development
     build:
       context: ../app
       dockerfile: ../docker/images/alpine/Dockerfile.development
