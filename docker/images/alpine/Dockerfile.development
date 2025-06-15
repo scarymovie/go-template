@@ -18,20 +18,23 @@ COPY . .
 
 RUN go build -o ${APP_BIN} ./cmd/app
 
-FROM alpine:latest
+FROM golang:${GO_DOCKER_VERSION}-alpine AS development
 
-RUN addgroup -S app && adduser -S app -G app
+RUN go install github.com/air-verse/air@latest
 
-ENV APP_LISTEN_PORT=8080 \
+ENV APP_DIR=/app \
+    APP_LISTEN_PORT=8080 \
     APP_ENV=development
 
-WORKDIR /app
+WORKDIR ${APP_DIR}
 
-COPY --from=builder --chown=app:app /go/bin/app ./app
-RUN chmod +x ./app
+COPY go.mod go.sum ./
+RUN go mod tidy
 
-USER app
+COPY . .
+
+COPY .air.toml ./
 
 EXPOSE ${APP_LISTEN_PORT}
 
-CMD ["./app"]
+CMD ["air"]
