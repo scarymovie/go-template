@@ -1,5 +1,5 @@
 
-name: template
+name: template-dev
 
 services:
   go:
@@ -39,7 +39,7 @@ services:
     networks:
       - internal
     volumes:
-      - ./volumes/development/postgres_data:/var/lib/postgresql/data:cached
+      - postgres_data:/var/lib/postgresql/data:cached
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U db_user -d db_database"]
       interval: 10s

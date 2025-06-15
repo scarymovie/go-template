@@ -16,8 +16,7 @@ RUN mkdir /app/tmp && chown appuser:appgroup /app/tmp
 COPY --from=builder /go/bin/dlv /usr/local/bin/
 COPY --from=builder /go/bin/air /usr/local/bin/
 
-COPY --chown=appuser:appgroup .air.toml .
-COPY --chown=appuser:appgroup go.mod go.sum ./
+COPY --chown=appuser:appgroup .air.toml go.mod go.sum ./
 
 USER appuser
 
