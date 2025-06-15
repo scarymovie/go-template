@@ -62,19 +62,29 @@ jobs:
           echo "Starting services in detached mode..."
           docker compose -f docker/docker-compose.development.yml up -d
 
-      # Шаг 7: Проверка работоспособности приложения
-      # Даем контейнерам немного времени на запуск и проверяем, отвечает ли сервер.
+            # Шаг 7: Проверка работоспособности приложения (УЛУЧШЕННАЯ ВЕРСИЯ)
       - name: Verify Application is Running
         run: |
-          echo "Waiting for services to start..."
-          sleep 15
+          echo "Waiting for application to become healthy..."
           
-          echo "Checking application health via curl..."
-          # Пробуем подключиться к порту 8080. Делаем 5 попыток с интервалом в 2 секунды.
-          curl --retry 5 --retry-delay 2 -v http://localhost:8080
+          # Цикл проверки: 12 попыток с интервалом 5 секунд (всего 60 секунд)
+          for i in {1..12}; do
+            # Подавляем вывод curl, но используем --fail, чтобы он возвращал код ошибки при неудаче
+            if curl -s --fail http://localhost:8080; then
+              echo "✅ Application is up and running!"
           
+              echo "Displaying container logs for confirmation..."
+              docker-compose -f docker/docker-compose.development.yml logs go
+              exit 0
+            fi
+            echo "Attempt $i/12 failed. Retrying in 5 seconds..."
+            sleep 5
+          done
+          
+          echo "❌ Application did not start in time."
           echo "Displaying container logs for debugging..."
-          docker compose -f docker/docker-compose.development.yml logs go
+          docker-compose -f docker/docker-compose.development.yml logs go
+          exit 1
 
       # Шаг 8: Очистка
       # Останавливаем и удаляем контейнеры в любом случае (даже если предыдущие шаги провалились)
