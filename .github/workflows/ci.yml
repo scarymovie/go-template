@@ -62,7 +62,7 @@ jobs:
           docker-compose -f docker/docker-compose.development.yml build
           
           echo "Starting services in detached mode..."
-          docker-compose -f docker/docker-compose.development.yml up -d
+          docker compose -f docker/docker-compose.development.yml up -d
 
       # Шаг 7: Проверка работоспособности приложения
       # Даем контейнерам немного времени на запуск и проверяем, отвечает ли сервер.
@@ -76,7 +76,7 @@ jobs:
           curl --retry 5 --retry-delay 2 -v http://localhost:8080
           
           echo "Displaying container logs for debugging..."
-          docker-compose -f docker/docker-compose.development.yml logs go
+          docker compose -f docker/docker-compose.development.yml logs go
 
       # Шаг 8: Очистка
       # Останавливаем и удаляем контейнеры в любом случае (даже если предыдущие шаги провалились)
