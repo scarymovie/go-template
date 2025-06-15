@@ -19,6 +19,8 @@ COPY go.mod go.sum ./
 
 RUN chown appuser:appgroup go.mod go.sum
 
+RUN mkdir /app/tmp && chown appuser:appgroup /app/tmp
+
 USER appuser
 
 RUN go mod download
