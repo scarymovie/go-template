@@ -1,40 +1,31 @@
-ARG GO_DOCKER_VERSION=1.24
-FROM golang:${GO_DOCKER_VERSION}-alpine AS builder
+FROM golang:1.24-alpine as builder
 
-ENV CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64 \
-    APP_DIR=/go/src/app \
-    APP_BIN=/go/bin/app \
-    APP_LISTEN_PORT=8080 \
-    APP_ENV=development
+WORKDIR /tools
 
-WORKDIR ${APP_DIR}
-
-COPY go.mod go.sum ./
-RUN go mod tidy
-
-COPY . .
-
-RUN go build -o ${APP_BIN} ./cmd/app
-
-FROM golang:${GO_DOCKER_VERSION}-alpine AS development
-
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
 RUN go install github.com/air-verse/air@latest
 
-ENV APP_DIR=/app \
-    APP_LISTEN_PORT=8080 \
-    APP_ENV=development
 
-WORKDIR ${APP_DIR}
+FROM golang:1.24-alpine
+
+WORKDIR /app
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+COPY --from=builder /go/bin/dlv /usr/local/bin/
+COPY --from=builder /go/bin/air /usr/local/bin/
 
 COPY go.mod go.sum ./
-RUN go mod tidy
 
-COPY . .
+RUN chown appuser:appgroup go.mod go.sum
 
-COPY .air.toml ./
+USER appuser
 
-EXPOSE ${APP_LISTEN_PORT}
+RUN go mod download
+
+COPY .air.toml .
+
+EXPOSE ${APP_LISTEN_PORT:-8080}
+EXPOSE 2345
 
 CMD ["air"]

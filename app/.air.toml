@@ -1,19 +1,36 @@
-root = "."
+# Конфигурация Air для hot-reload и отладки
 
+root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -o tmp/main ./cmd/app"
-bin = "tmp/main"
-full_bin = "tmp/main"
-exclude_dir = ["tmp"]
+# Команда для сборки приложения перед запуском
+cmd = "go build -o ./tmp/main ./cmd/app"
 
+# Путь к бинарнику отладчика Delve
+bin = "/usr/local/bin/dlv"
+
+# Аргументы для Delve
+args_bin = [
+    "--continue",         # Не ставить на паузу при старте, сразу запускать приложение
+    "--listen=:2345",     # Порт, на котором Delve будет ждать подключения отладчика
+    "--headless=true",    # Запуск в режиме сервера, без собственного UI
+    "--api-version=2",    # Использовать стандартную версию API для отладчиков
+    "--accept-multiclient", # Разрешать переподключение отладчика (важно для hot-reload)
+    "exec",               # Команда Delve для запуска уже скомпилированного бинарника
+    "./tmp/main"          # Путь к нашему приложению, которое нужно запустить
+]
+
+# Расширения файлов, за которыми нужно следить
+include_ext = ["go", "yaml"]
+# Директории, которые нужно игнорировать
+exclude_dir = ["tmp", "vendor", "test"]
+
+# Лог-файл для ошибок сборки
+log = "tmp/build-errors.log"
+# Задержка в миллисекундах перед перезапуском
+delay = 1000
 
 [log]
-  time = true
-
-[color]
-  main = "yellow"
-  watcher = "cyan"
-  build = "green"
-  runner = "magenta"
+# Включаем временные метки в логах air
+time = true
