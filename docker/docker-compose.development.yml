@@ -24,6 +24,7 @@ services:
       - seccomp:unconfined
     volumes:
       - ../app:/app:cached
+      - go_app_tmp:/app/tmp
 
   postgres:
     image: postgres:17-alpine
@@ -52,3 +53,7 @@ networks:
   public:
     driver: bridge
     internal: false
+
+volumes:
+  go_app_tmp:
+  postgres_data:

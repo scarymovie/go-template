@@ -1,7 +1,6 @@
 FROM golang:1.24-alpine as builder
 
 WORKDIR /tools
-
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 RUN go install github.com/air-verse/air@latest
 
@@ -12,20 +11,17 @@ WORKDIR /app
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
+RUN mkdir /app/tmp && chown appuser:appgroup /app/tmp
+
 COPY --from=builder /go/bin/dlv /usr/local/bin/
 COPY --from=builder /go/bin/air /usr/local/bin/
 
-COPY go.mod go.sum ./
-
-RUN chown appuser:appgroup go.mod go.sum
-
-RUN mkdir /app/tmp && chown appuser:appgroup /app/tmp
+COPY --chown=appuser:appgroup .air.toml .
+COPY --chown=appuser:appgroup go.mod go.sum ./
 
 USER appuser
 
 RUN go mod download
-
-COPY .air.toml .
 
 EXPOSE ${APP_LISTEN_PORT:-8080}
 EXPOSE 2345
