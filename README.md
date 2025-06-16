@@ -25,7 +25,7 @@ hot-reload и отладки, вы можете сразу сфокусиров�
 
 ```bash
 # 1. Клонируйте репозиторий под новым именем
-git clone https://github.com/your-username/go-template.git my-new-project
+git clone https://github.com/scarymovie/go-template.git my-new-project
 
 # 2. Перейдите в папку проекта
 cd my-new-project
