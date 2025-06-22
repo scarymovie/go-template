@@ -1,97 +1,116 @@
+## 📚 Localization / Russian Documentation
+
+🇷🇺 Prefer reading in Russian? See [README.ru.md](./README.ru.md) for full documentation in Russian.
+
 # Go Project Template
 
 [![Go Version](https://img.shields.io/badge/Go-1.24-blue.svg)](https://go.dev/)
 [![Docker](https://img.shields.io/badge/Docker-Powered-blue.svg)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**Это не просто проект, а готовый шаблон (boilerplate) для быстрого старта ваших веб-приложений на Go.**
+**This is not just another project – it’s a fully functional boilerplate for quickly bootstrapping your Go web
+applications.**
 
-Он создан, чтобы избавить вас от рутинной настройки окружения. Вместо того чтобы тратить время на конфигурацию Docker,
-hot-reload и отладки, вы можете сразу сфокусироваться на написании бизнес-логики. Просто используйте этот репозиторий
-как основу для своего нового проекта!
+It’s designed to save you from repetitive environment setup tasks. Instead of wasting time configuring Docker,
+hot-reload, and debugging tools, you can focus directly on writing your business logic.  
+Use this repository as a solid foundation for your next Go project!
 
-## 🚀 Как использовать этот шаблон
+## 🚀 How to Use This Template
 
-Есть два способа начать работу:
+There are two recommended ways to get started:
 
-**1. (Рекомендуемый) Через GitHub Template:**
+**1. (Recommended) Use the GitHub Template:**
 
-Нажмите на зеленую кнопку **"Use this template"** вверху страницы репозитория. GitHub автоматически создаст новый
-репозиторий в вашем аккаунте со всеми файлами из этого шаблона, но с чистой историей коммитов.
+Click the green **"Use this template"** button at the top of the repository page.  
+GitHub will automatically create a new repository under your account with all files copied — but without any commit
+history.
 
-**2. Вручную:**
+**2. Manual Setup:**
 
-Если вы предпочитаете делать все локально:
+If you prefer to set things up locally:
 
 ```bash
-# 1. Клонируйте репозиторий под новым именем
+# 1. Clone the repository with a new name
 git clone https://github.com/scarymovie/go-template.git my-new-project
 
-# 2. Перейдите в папку проекта
+# 2. Navigate to the project directory
 cd my-new-project
 
-# 3. Удалите историю коммитов шаблона и создайте свою
+# 3. Remove template git history and initialize your own
 rm -rf .git
 git init
 git add .
 git commit -m "Initial commit from template"
 
-# 4. Не забудьте поменять имя модуля в файле go.mod
-# и названия сервисов в docker-compose файлах.
+# 4. Don’t forget to update the module name in go.mod
+# and adjust service names in docker-compose files.
 ```
 
-## 🚀 Начало работы
+## 🚀 Getting Started
 
-### Необходимые утилиты
+### Prerequisites
+
+Make sure you have the following tools installed:
 
 - [Docker](https://www.docker.com/get-started)
-- [Docker Compose](https://docs.docker.com/compose/install/) (обычно устанавливается вместе с Docker Desktop)
+- [Docker Compose](https://docs.docker.com/compose/install/)  
+  *(usually included with Docker Desktop)*
 
-### Установка и запуск
+### Installation and Running the Project
 
-1. **Запустите Docker Compose:**
-   Эта команда соберет Docker-образ для вашего Go-приложения, запустит контейнеры с приложением и базой данных
-   PostgreSQL.
+1. **Start the development environment using Docker Compose:**
 
-    ```bash
-    docker-compose -f docker/docker-compose.development.yml up --build
-    ```
+   This command will build a Docker image for your Go application and start the containers for both the app and the
+   PostgreSQL database.
 
-    - `-f docker/docker-compose.development.yml`: указывает путь к файлу конфигурации.
-    - `up`: запускает сервисы.
-    - `--build`: принудительно пересобирает образы перед запуском.
+   ```bash
+   docker-compose -f docker/docker-compose.development.yml up --build
 
-После успешного запуска вы увидите в консоли логи от `air` и вашего приложения. Сервер будет доступен по
-адресу [http://localhost:8080](http://localhost:8080).
+   - `-f docker/docker-compose.development.yml`:  specifies the path to the compose file.
+   - `up`: starts the services.
+   - `--build`: forces Docker to rebuild the images before starting.
+   ```
 
-## 💡 Использование
+Once everything is running, you'll see logs from air and your application in the terminal.
+The server will be accessible at http://localhost:8080.
 
-### Hot-Reload (Автоматическая перезагрузка)
+## 💡 Usage
 
-Благодаря **Air**, любые изменения в файлах с расширением `.go` или `.yaml` в директории `app/` автоматически вызовут
-пересборку и перезапуск вашего приложения внутри контейнера. Просто сохраните файл и наблюдайте за логами в терминале.
+### Hot Reload with Air
 
-### Удаленная отладка с помощью Delve
+Thanks to **Air**, any changes to `.go` or `.yaml` files inside the `app/` directory will automatically trigger
+a rebuild and restart of your application inside the container.  
+Just save your file and watch the logs in the terminal — no manual restarts needed.
 
-Среда уже настроена для удаленной отладки. Отладчик Delve запущен внутри контейнера `go` и слушает порт `2345`.
+### Remote Debugging with Delve
 
-#### Настройка GoLand
+The environment is preconfigured for remote debugging.  
+The `go` container runs the **Delve** debugger and listens on port `2345`.
 
-1. Перейдите в настройку Run -> Edit configuration -> Go Remote
-2. Установите в поле **host** значение ```localhost```
-3. Установите в поле **port** значение ```2345```
-4. Убедитесь, что ваши Docker-контейнеры запущены (`docker-compose ... up`).
-5. Поставьте точку останова (breakpoint) в вашем коде, например, в `app/cmd/app/main.go`.
-6. Запустите отладку
+#### Setting Up in GoLand
 
-Отладчик подключится к процессу в контейнере, и выполнение остановится на вашей точке останова.
-Для повторного подключения к дебагу придётся внести изменение в файл для перезагрузки hot-reload или перезапустить
-контейнер.
+1. Go to **Run > Edit Configurations > + > Go Remote**.
+2. Set **Host** to `localhost`.
+3. Set **Port** to `2345`.
+4. Make sure your Docker containers are running (`docker-compose ... up`).
+5. Set a breakpoint in your code, for example in `app/cmd/app/main.go`.
+6. Start the debug session.
 
-### Подключение к PostgreSQL
+The debugger will attach to the Go process running inside the container and pause execution at your breakpoint.  
+To reconnect after disconnecting, you may need to make a code change (to trigger hot reload) or restart the container manually.
 
-- **Хост:** `localhost` (если вы подключаетесь с хост-машины, т.к. порт не проброшен наружу) или
-  `template-postgres-development` (если подключаетесь из другого контейнера в той же сети `internal`).
-- **Пользователь:** `db_user`
-- **Пароль:** `db_password`
-- **База данных:** `db_database`
+### Connecting to PostgreSQL
+
+- **Host:** `localhost` (when connecting from the host machine, since the port is exposed),  
+  or `template-postgres-development` (when connecting from another container in the `internal` Docker network).
+- **User:** `db_user`
+- **Password:** `db_password`
+- **Database:** `db_database`
+
+
+## 🛠 TODO / Planned Improvements
+
+- [ ] Add CI/CD pipeline for production deployments
+- [ ] Add unit & integration tests
+- [ ] Improve error handling with middleware
+- [ ] Add DI building
