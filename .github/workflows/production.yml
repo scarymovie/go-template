@@ -1,0 +1,51 @@
+name: Go Production CI
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-production:
+    name: Build and Verify Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Build and Run Production Services
+        run: |
+          docker compose -f docker/docker-compose.production.yml build
+          docker compose -f docker/docker-compose.production.yml up -d
+
+      - name: Verify Production Application
+        run: |
+          echo "Waiting for app to become available..."
+          for i in {1..12}; do
+            if curl -s --fail http://localhost:8080; then
+              echo "✅ App is up!"
+              docker compose -f docker/docker-compose.production.yml logs go
+              exit 0
+            fi
+            echo "Attempt $i/12 failed, retrying..."
+            sleep 5
+          done
+          echo "❌ App did not start. Logs:"
+          docker compose -f docker/docker-compose.production.yml logs go
+          exit 1
+
+      - name: Stop and Clean Up
+        if: always()
+        run: docker compose -f docker/docker-compose.production.yml down -v
